@@ -18,6 +18,7 @@ import moment from "moment";
 import LauchFilterModal from "../components/LauchFilterModal";
 import IndexSearchBar from "../components/IndexSearchBar";
 import {toLauchItem, toLauchItemArray} from "../../utils/resp2model";
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 
 export default function LauchList({navigation, route}:RootStackScreenProps<'LauchList'>) {
@@ -139,55 +140,55 @@ export default function LauchList({navigation, route}:RootStackScreenProps<'Lauc
 
 
     return (
-        <View style={styles.container}>
-            {/*状态栏*/}
-            <StatusBar translucent={false} backgroundColor="transparent"></StatusBar>
+        <SafeAreaView style={styles.safeView}>
+            <View style={styles.container}>
 
-            {/*搜索头部*/}
-            <IndexSearchBar searchAction={(inPrams)=>{
-                loadMoreData(inPrams);
-                scrollToTop();
-            }} filterBtnAction={()=>setShowModel(true)} />
+                {/*搜索头部*/}
+                <IndexSearchBar searchAction={(inPrams)=>{
+                    loadMoreData(inPrams);
+                    scrollToTop();
+                }} filterBtnAction={()=>setShowModel(true)} />
 
-            {/*列表*/}
-            <FlatList
-                ref={flatlistRef}
-                data={data}
-                renderItem={renderItem}
-                keyExtractor={(item) => item.id.toString()+Math.random()*100}
-                removeClippedSubviews={true} // Unmount components when outside of window
-                refreshControl={
-                    <RefreshControl
-                        refreshing={isRefreshing}
-                        onRefresh={() => {
-                            page = 1
-                            setIsLoadMore(true)
-                            loadMoreData({});
-                        }}
-                    />
-                }
-                // onEndReachedThreshold={0.5}
-                onEndReached={() => {
-                    if(isLoadMore){
-                        page++;
-                        loadMoreData({})
+                {/*列表*/}
+                <FlatList
+                    ref={flatlistRef}
+                    data={data}
+                    renderItem={renderItem}
+                    keyExtractor={(item) => item.id.toString()+Math.random()*100}
+                    removeClippedSubviews={true} // Unmount components when outside of window
+                    refreshControl={
+                        <RefreshControl
+                            refreshing={isRefreshing}
+                            onRefresh={() => {
+                                page = 1
+                                setIsLoadMore(true)
+                                loadMoreData({});
+                            }}
+                        />
                     }
+                    // onEndReachedThreshold={0.5}
+                    onEndReached={() => {
+                        if(isLoadMore){
+                            page++;
+                            loadMoreData({})
+                        }
 
-                }}
-                ListFooterComponent={
-                    isLoading ? (
-                        <ActivityIndicator animating={true} style={{ marginVertical: 10 }} />
-                    ) : null
-                }
-            />
+                    }}
+                    ListFooterComponent={
+                        isLoading ? (
+                            <ActivityIndicator animating={true} style={{ marginVertical: 10 }} />
+                        ) : null
+                    }
+                />
 
-            {/*筛选modal*/}
-            <LauchFilterModal  commitAction={(inPrams)=>{loadMoreData(inPrams);scrollToTop();}} dismiss={()=>setShowModel(false)} visiable={showModel}/>
+                {/*筛选modal*/}
+                <LauchFilterModal  commitAction={(inPrams)=>{loadMoreData(inPrams);scrollToTop();}} dismiss={()=>setShowModel(false)} visiable={showModel}/>
 
-            {/*悬浮按钮*/}
-            <IconButton style={styles.upArrow} size={40} icon="arrow-up-circle" onPress={scrollToTop} ></IconButton>
+                {/*悬浮按钮*/}
+                <IconButton style={styles.upArrow} size={40} icon="arrow-up-circle" onPress={scrollToTop} ></IconButton>
 
-        </View>
+            </View>
+        </SafeAreaView>
     );
 }
 
@@ -196,6 +197,12 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor:'white'
     },
+
+    safeView:{
+        flex:1,
+        backgroundColor:'white'
+    },
+
     searchBar:{
         marginTop:10
     },
